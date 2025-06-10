@@ -1,12 +1,14 @@
 package org.example.core.interfaces;
 
-import org.example.BlockChainObserver.Observer;
+import org.example.block.Block;
 import org.example.block.BlockData;
+
+import java.util.ArrayList;
 
 public interface BlockChainInterface {
     void add(BlockData data);
 
-    public void validate();
+    public boolean validate(ArrayList<Block> blockchain);
 
 
 }

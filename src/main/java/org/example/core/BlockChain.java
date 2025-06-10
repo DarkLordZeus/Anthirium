@@ -1,94 +1,86 @@
 package org.example.core;
 
-import org.example.BlockChainObserver.Observer;
-import org.example.BlockChainObserver.ObserverInterface;
 import org.example.block.Block;
 import org.example.block.BlockData;
 import org.example.core.interfaces.BlockChainInterface;
-import org.example.core.interfaces.BlockChainObsInterface;
+import org.example.utils.Helpers;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
-public class BlockChain implements BlockChainInterface, BlockChainObsInterface {
-    private final  String name;
-    private final int uniqueId;
-    private final ArrayList<Block> blockchain = new ArrayList<>();
-    private final ArrayList<ObserverInterface> observers = new ArrayList<>();
-
-
-    public BlockChain(int uniqueId, String name) {
-        this.uniqueId = uniqueId;
-        this.name = name;
+public class BlockChain implements BlockChainInterface {
+    private ArrayList<Block> blockchain = new ArrayList<>();
+    protected int blockMinedSince =0;
+    static int difficulty =1;
+    public BlockChain() {
+        blockchain.add(new Block(new BlockData("0"), "0"));
+        startDifficultyThread();
     }
+
 
 
     @Override
     public void add(BlockData data) {
-        int prevHash=  blockchain.isEmpty()?0:blockchain.getLast().getBlockHash();
+        String prevHash=  blockchain.getLast().getBlockHash();
         Block block = new Block(data,prevHash);
+        blockMinedSince++;
         blockchain.add(block);
-        notifyObservers();
-        System.out.println(blockchain);
+        //System.out.println(blockchain);
     }
 
     @Override
-    public void validate() {
+    public boolean validate(ArrayList<Block> blockchain) {
         for(int i = 1; i < blockchain.size(); i++){
             Block current = blockchain.get(i);
             Block previous = blockchain.get(i - 1);
 
             // 1. Check previous hash consistency
-            if (current.getPrevBlockHash() !=  previous.getBlockHash()) {
+            if (!Objects.equals(current.getPrevBlockHash(), previous.getBlockHash())) {
                 System.out.println("❌ Invalid chain at block " + i + ": Previous hash mismatch.");
-                return;
+                return false;
             }
 
             // 2. Check current block's hash correctness
             //! Stored hash must be same as expected hash
-            int expectedHash = Integer.hashCode(current.getData().hashCode() + current.getPrevBlockHash());
-            if (current.getBlockHash() != expectedHash) {
+            String expectedHash = Helpers.sha256(current.getData().hashCode() + current.getPrevBlockHash());
+            if (!Objects.equals(current.getBlockHash(), expectedHash)) {
                 System.out.println("❌ Invalid block at " + i + ": Block hash incorrect.");
-                return;
+                return false;
             }
         }
+        return true;
     }
 
-    @Override
-    public void addObserver(ObserverInterface observer) {
-        observers.add(observer);
-        observer.addBlockChainToObs(name);
-
-    }
-    @Override
-    public void removeObserver(ObserverInterface observer) {
-        observers.remove(observer);
+    public ArrayList<Block> getBlockchain() {
+        return blockchain;
     }
 
-    @Override
-    public void notifyObservers() {
-        for(ObserverInterface observer : observers){
-            observer.update(blockchain,name);
+    public void replaceChain(ArrayList<Block> newChain) {
+        if (newChain.size() > blockchain.size() && validate(newChain)) {
+            int newBlocks = newChain.size()-blockchain.size();
+            this.blockchain = newChain;
+            System.out.println("\033[0;31m"+blockchain.stream().map(e->(e.getData().getTransactionData()+e.getData().getBlockId())).toList()+"\033[0m");
+            blockMinedSince+=newBlocks;
         }
     }
 
-
-    public int getUniqueId() {
-        return uniqueId;
+    private void startDifficultyThread() {
+        Thread difficultyThread = new Thread(() -> {
+            while (true) {
+                if (blockMinedSince > 20) {
+                    difficulty++;
+                    blockMinedSince = 0; // Optional: reset the counter
+                    System.out.println("\033[0;32m" + "NEW DIFFICULTY AS : " + difficulty + "\033[0m");
+                }
+                try {
+                    Thread.sleep(1000); // 1 second pause before checking again
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                    break; // exit thread if interrupted
+                }
+            }
+        });
+        difficultyThread.setDaemon(true); // So it doesn’t block JVM exit
+        difficultyThread.start();
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public ArrayList<Observer> getAllObservers(){
-        ArrayList<Observer> observers = new ArrayList<>();
-        for(ObserverInterface obs : this.observers){
-            observers.add((Observer) obs);
-        }
-        return observers;
-
-    }
-
-
-
 }

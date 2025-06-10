@@ -1,25 +1,27 @@
 package org.example.block;
 
-public class Block {
-    private final Object data;
-    private final int blockHash;
-    private final int prevBlockHash;
+import org.example.utils.Helpers;
 
-    public Block(Object data,Integer prevBlockHash){
+public class Block {
+    private final BlockData data;
+    private final String blockHash;
+    private final String prevBlockHash;
+
+    public Block(BlockData data,String prevBlockHash){
         this.data = data;
         this.prevBlockHash=prevBlockHash;
-        this.blockHash = Integer.hashCode(data.hashCode() + prevBlockHash);
+        this.blockHash = Helpers.sha256(data.hashCode() + prevBlockHash);
     }
 
-    public int getBlockHash() {
+    public String getBlockHash() {
         return blockHash;
     }
 
-    public int getPrevBlockHash() {
+    public String getPrevBlockHash() {
         return prevBlockHash;
     }
 
-    public Object getData() {
+    public BlockData getData() {
         return data;
     }
 }

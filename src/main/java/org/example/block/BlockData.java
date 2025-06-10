@@ -1,12 +1,16 @@
 package org.example.block;
 
+import java.util.Objects;
+import java.util.Random;
+import java.util.UUID;
+
 public class BlockData {
-    private static int uid =1;
-    private final int blockId;
+
+    private final String blockId;
     private final String transactionData;
 
     public BlockData(String transactionData) {
-        this.blockId = uid++;
+        this.blockId = UUID.randomUUID().toString();
 
         this.transactionData = transactionData;
     }
@@ -15,7 +19,12 @@ public class BlockData {
         return transactionData;
     }
 
-    public int getBlockId() {
+    public String getBlockId() {
         return blockId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(transactionData);
     }
 }
