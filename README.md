@@ -1,6 +1,6 @@
 # 🧱 Java Peer-to-Peer Blockchain
 
-A simple peer-to-peer blockchain implementation in Java. This project demonstrates basic concepts of blockchain such as block creation, proof of work, peer-to-peer communication, and chain validation using socket programming.
+Anthirium : A peer-to-peer blockchain implementation in Java. This project demonstrates basic concepts of blockchain such as block creation, proof of work, peer-to-peer communication, and chain validation using socket programming.
 
 ---
 
@@ -29,3 +29,28 @@ A simple peer-to-peer blockchain implementation in Java. This project demonstrat
    ```bash
    git clone https://github.com/your-username/java-blockchain.git
    cd java-blockchain
+   
+
+   ```
+2. **Run the Miners
+   ```bash
+   mvn clean package
+
+   java -cp target/BlockChain-1.0-SNAPSHOT.jar org.example.Main 5009 5001 5002
+   java -cp target/BlockChain-1.0-SNAPSHOT.jar org.example.Main 5001 5009 5002
+   java -cp target/BlockChain-1.0-SNAPSHOT.jar org.example.Main 5002 5009 5002
+   ```
+
+3.HURRAYY ANTHIRIUM IS UP..
+
+
+## 📦 Future Goals
+   - Running on cloud
+   - Making it complete decentralized
+   - Increasing Security concerns
+   - Cyrpto Introduction
+
+
+
+   
+
