@@ -11,7 +11,7 @@ import java.util.Objects;
 public class BlockChain implements BlockChainInterface {
     private ArrayList<Block> blockchain = new ArrayList<>();
     protected int blockMinedSince =0;
-    static int difficulty =1;
+    public static int difficulty =1;
     public BlockChain() {
         blockchain.add(new Block(new BlockData("0"), "0"));
         startDifficultyThread();
@@ -59,7 +59,7 @@ public class BlockChain implements BlockChainInterface {
         if (newChain.size() > blockchain.size() && validate(newChain)) {
             int newBlocks = newChain.size()-blockchain.size();
             this.blockchain = newChain;
-            System.out.println("\033[0;31m"+blockchain.stream().map(e->(e.getData().getTransactionData()+e.getData().getBlockId())).toList()+"\033[0m");
+            System.out.println("\033[0;31m"+ "Block Size"+blockchain.size()+" : "+ blockchain.stream().map(e->(e.getData().getTransactionData()+e.getData().getBlockId())).toList()+"\033[0m");
             blockMinedSince+=newBlocks;
         }
     }
@@ -67,9 +67,10 @@ public class BlockChain implements BlockChainInterface {
     private void startDifficultyThread() {
         Thread difficultyThread = new Thread(() -> {
             while (true) {
+                System.out.println("blocked mine : "+blockMinedSince);
                 if (blockMinedSince > 20) {
                     difficulty++;
-                    blockMinedSince = 0; // Optional: reset the counter
+                    blockMinedSince = blockMinedSince%20; // Optional: reset the counter
                     System.out.println("\033[0;32m" + "NEW DIFFICULTY AS : " + difficulty + "\033[0m");
                 }
                 try {

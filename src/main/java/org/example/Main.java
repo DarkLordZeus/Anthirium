@@ -1,6 +1,7 @@
 package org.example;
 
 import org.example.block.Block;
+import org.example.mine.miners.Miner;
 import org.example.mine.nodes.Node;
 import org.example.mine.peer.PeerServer;
 import org.example.block.BlockData;
@@ -40,17 +41,17 @@ public class Main {
         }
 
         // 3. Start the node and broadcast a block
-        Node node = new Node(peers,blockchain);
-        node.addBlockInNode();   // add a block to this node
-        node.broadcast();        // broadcast to peers
-
-
-        while (true){
-            Thread.sleep(5000);
-            node.addBlockInNode();   // add a block to this node
-            node.broadcast();
-           // System.out.println(blockchain.getBlockchain().stream().map(e->(e.getData().getTransactionData()+e.getData().getBlockId())).toList());
-        }
+        Miner node = new Miner(peers,blockchain);
+//        node.addBlockInNode();   // add a block to this node
+//        node.broadcast();        // broadcast to peers
+//
+//
+//        while (true){
+//            Thread.sleep(5000);
+//            node.addBlockInNode();   // add a block to this node
+//            node.broadcast();
+//           // System.out.println(blockchain.getBlockchain().stream().map(e->(e.getData().getTransactionData()+e.getData().getBlockId())).toList());
+//        }
 
 
     }
